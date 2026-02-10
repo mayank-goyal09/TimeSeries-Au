@@ -8,3 +8,31 @@
 ![Pandas](https://img.shields.io/badge/Pandas-150458?logo=pandas&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikit-learn&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+<!-- 🔗 STREAMLIT APP LINK — COMING SOON -->
+<p align="center">
+  <a href="#">
+    <img src="https://img.shields.io/badge/🥇_LIVE_DEMO-Coming_Soon-D4AF37?style=for-the-badge" alt="Live Demo">
+  </a>
+  <a href="https://github.com/mayank-goyal09">
+    <img src="https://img.shields.io/badge/GitHub-mayank--goyal09-181717?style=for-the-badge&logo=github" alt="GitHub">
+  </a>
+</p>
+
+---
+
+## 🎭 **THE GOLD ORACLE AWAITS** 🎭
+
+<p align="center">
+  <img src="assets/hero_banner.png" width="800" alt="Gold Price Oracle - AI Prediction Banner">
+</p>
+
+<p align="center">
+  <b>🏆 Predict the future of gold with the power of Deep Learning! 🏆</b>
+</p>
+
+### 🔥 LSTM Neural Networks × Smart Data Strategy × Premium Glassmorphism UI = **Gold Price Oracle** 🔥
+
+> *"The model kept predicting ₹25,000 when gold was at ₹77,000. This is the story of how we figured out why — and fixed it."*
+
+---
