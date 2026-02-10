@@ -607,3 +607,49 @@ Contributions are **always welcome!** 🎉
 5. 🎁 Open a Pull Request
 
 ---
+
+## 📝 **LICENSE** 📝
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+---
+
+## 👨‍💻 **CONNECT WITH ME** 👨‍💻
+
+<p align="center">
+  <a href="https://github.com/mayank-goyal09"><img src="https://img.shields.io/badge/GitHub-mayank--goyal09-181717?style=for-the-badge&logo=github" alt="GitHub"></a>
+  <a href="https://www.linkedin.com/in/mayank-goyal-mg09/"><img src="https://img.shields.io/badge/LinkedIn-Mayank_Goyal-0077B5?style=for-the-badge&logo=linkedin" alt="LinkedIn"></a>
+  <a href="https://mayank-goyal09.github.io/"><img src="https://img.shields.io/badge/Portfolio-mayank--goyal09-00C853?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Portfolio"></a>
+  <a href="mailto:itsmaygal09@gmail.com"><img src="https://img.shields.io/badge/Email-itsmaygal09@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
+</p>
+
+<p align="center">
+  <b>Mayank Goyal</b><br>
+  📊 Data Analyst | 🤖 ML Enthusiast | 🐍 Python Developer<br>
+  💼 Data Analyst Intern @ SpacECE Foundation India
+</p>
+
+---
+
+## ⭐ **SHOW YOUR SUPPORT** ⭐
+
+<p align="center">
+  <b>🥇 Enjoyed Gold Price Oracle? Give it a star! ⭐</b><br>
+  <i>Every star helps us make more awesome projects!</i>
+</p>
+
+<p align="center">
+  <a href="https://github.com/mayank-goyal09/gold-price-oracle">
+    <img src="https://img.shields.io/badge/⭐_STAR_THIS_REPO-D4AF37?style=for-the-badge" alt="Star This Repo">
+  </a>
+</p>
+
+---
+
+### 🥇 **Built with LSTM, Debugging Grit & ❤️ by Mayank Goyal** 🥇
+
+**"Three bugs. Three fixes. One golden model."** ✨
+
+---
+
+![Footer](https://capsule-render.vercel.app/api?type=waving&color=D4AF37&height=100&section=footer)
