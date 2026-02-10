@@ -219,3 +219,99 @@ After all three fixes, the results transformed completely:
 </table>
 
 ---
+
+## 🧠 **THE THREE LESSONS** 🧠
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+### 📊 Lesson 1
+### **Scaler Must See All Data**
+
+If your scaler hasn't seen the test range, **all predictions will be garbage.** Always fit on the full data range.
+
+</td>
+<td align="center" width="33%">
+
+### 🧠 Lesson 2
+### **Dense(30) > Dense(1) Loop**
+
+Multi-output prediction eliminates error accumulation. Never recursively feed predictions back if you can avoid it.
+
+</td>
+<td align="center" width="33%">
+
+### 📅 Lesson 3
+### **Recent Data > All Data**
+
+For financial forecasting, recent patterns matter more than historical ones. Train on what's **relevant**, not everything.
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🏗️ **WHAT WE BUILT** 🏗️
+
+<p align="center">
+  <img src="assets/streamlit_app_ui.png" width="800" alt="Gold Price Oracle - Streamlit App">
+</p>
+
+<table>
+<tr>
+<td width="50%">
+
+### 🧠 **LSTM Prediction Engine**
+
+Our Deep Learning model analyzes 30 days of price history and forecasts the next 30 days — all at once!
+
+- 🔮 **Multi-Output LSTM** — Predicts 30 days simultaneously
+- 📊 **Smart Scaling** — MinMaxScaler fitted on full range
+- 🎯 **Recent Data Training** — 2022-2025 focus
+- ⚡ **Fast Inference** — Predictions in < 1 second
+
+</td>
+<td width="50%">
+
+### 🎨 **Premium Gold UI**
+
+A stunning Streamlit dashboard with glassmorphism design and gold particle effects.
+
+- ✨ **Gold Particle Animations** — Floating sparkles
+- 🪟 **Glassmorphism Cards** — Frosted glass aesthetic
+- 📈 **Interactive Plotly Charts** — Zoom, pan, hover
+- 📥 **CSV Download** — Export forecast data for analysis
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 📊 **Data Intelligence**
+
+Smart data processing pipeline that transforms raw CSV into actionable predictions.
+
+- 📅 **11 Years of Data** — 2,848 data points (2014-2025)
+- 🧹 **Auto Preprocessing** — Missing values, date parsing
+- 📉 **Key Metrics** — MAE, RMSE, % accuracy
+- 🔄 **Upload Your Own** — Custom CSV support
+
+</td>
+<td width="50%">
+
+### 🔮 **Forecast Engine**
+
+Two forecast modes for maximum flexibility:
+
+- 🎯 **Direct Forecast** — Multi-output, no error drift
+- 🔄 **Recursive Forecast** — Single-step for comparison
+- 📆 **1-30 Day Horizon** — Adjustable via slider
+- ✅ **Sanity Checks** — Auto-validates predictions
+
+</td>
+</tr>
+</table>
+
+---
