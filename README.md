@@ -1,3 +1,4 @@
+# 🥇✨ GOLD PRICE ORACLE — AI-Powered Price Prediction ✨🥇
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Cinzel&weight=700&size=28&duration=3000&pause=1000&color=D4AF37&center=true&vCenter=true&width=1000&lines=Welcome+to+Gold+Price+Oracle+🥇;LSTM+Deep+Learning+Predictions;From+Broken+Model+to+Breakthrough;A+Story+of+Debugging+%26+Discovery;Built+with+TensorFlow+%2B+Streamlit)](https://git.io/typing-svg)
 
@@ -33,6 +34,9 @@
 
 ### 🔥 LSTM Neural Networks × Smart Data Strategy × Premium Glassmorphism UI = **Gold Price Oracle** 🔥
 
+> *"The model kept predicting ₹25,000 when gold was at ₹77,000. This is the story of how we figured out why — and fixed it."*
+
+---
 
 ## 📖 **THE STORY — A Journey of Discovery** 📖
 
@@ -90,10 +94,6 @@ Model Prediction:   ₹25,000  😱
 </td>
 </tr>
 </table>
-
----
-
-> *"The model kept predicting ₹25,000 when gold was at ₹77,000. This is the story of how we figured out why — and fixed it."*
 
 ---
 
@@ -383,6 +383,23 @@ scaler.fit(df[['Price']].values)   # ← Sees FULL range!
 # ₹47,471 → 0.0
 # ₹79,257 → 1.0
 # ₹77,149 → ~0.93 (properly scaled!)
+```
+
+---
+
+### 🧠 **STEP 3: LSTM Prediction**
+
+Our multi-output LSTM reads 30 days of history and predicts the next 30 days simultaneously.
+
+```python
+model = Sequential([
+    LSTM(64, return_sequences=True, input_shape=(30, 1)),
+    Dropout(0.2),
+    LSTM(32),
+    Dropout(0.2),
+    Dense(32, activation='relu'),
+    Dense(30)     # ← 30 outputs at once! No recursion!
+])
 ```
 
 ---
