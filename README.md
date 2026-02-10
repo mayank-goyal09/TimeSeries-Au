@@ -153,3 +153,69 @@ model = Sequential([
 
 ---
 
+#### 🐛 **Bug #3: Training on Irrelevant Data** *(The Eureka Moment)*
+
+Even after Bug #1 and #2 were fixed, predictions were still off by 21%:
+
+```
+Last actual: ₹77,149
+Prediction:  ₹60,583   (Still 21% off! 😤)
+```
+
+Then came the **breakthrough insight:**
+
+> *"Why are we training on ₹24,000 prices from 2014? The model needs to learn CURRENT price patterns, not decade-old ones!"*
+
+```python
+# ❌ WHAT WE HAD
+# Training on ALL data: 2014-2025 (₹24k - ₹79k)
+# Model's "average" world: ₹41,000
+# Prediction: Gravitates toward ₹41,000-₹60,000
+
+# ✅ THE FIX
+# Train ONLY on 2022-2025 data (₹47k - ₹79k)
+df = df_full[df_full['Date'].dt.year >= 2022]
+# Model's "average" world: ₹60,000+
+# Prediction: Stays in the ₹70,000+ range! 🎯
+```
+
+---
+
+### 🎉 **Act 4: The Breakthrough** *(Victory!)*
+
+<p align="center">
+  <img src="assets/before_after.png" width="800" alt="Before vs After - Prediction Quality">
+</p>
+
+After all three fixes, the results transformed completely:
+
+<table>
+<tr>
+<td width="50%">
+
+### ❌ **BEFORE (3 Bugs)**
+
+| Metric | Value |
+|--------|-------|
+| Last Price | ₹77,149 |
+| Prediction | ₹25,000 |
+| Error | **-67%** 💀 |
+| Verdict | Useless |
+
+</td>
+<td width="50%">
+
+### ✅ **AFTER (All Fixed)**
+
+| Metric | Value |
+|--------|-------|
+| Last Price | ₹77,149 |
+| Prediction | ~₹77,000+ |
+| Error | **< 5%** 🎯 |
+| Verdict | Production Ready! |
+
+</td>
+</tr>
+</table>
+
+---
