@@ -96,3 +96,60 @@ Model Prediction:   ₹25,000  😱
 > *"The model kept predicting ₹25,000 when gold was at ₹77,000. This is the story of how we figured out why — and fixed it."*
 
 ---
+
+### 🔍 **Act 3: The Investigation** *(Detective Mode Activated)*
+
+We dove deep into every line of code. Hours of debugging. Coffee. More coffee. And then... **we found not one, but THREE critical bugs:**
+
+---
+
+#### 🐛 **Bug #1: The Scaler Catastrophe** *(The Silent Killer)*
+
+```python
+# ❌ WHAT WE HAD (WRONG!)
+scaler = MinMaxScaler()
+train_scaled = scaler.fit_transform(train)      # Fitted on 80% of data
+test_scaled  = scaler.transform(test)            # Test data OUT OF RANGE!
+
+# Scaler learned: Min=₹24,545  Max=₹55,000 (from 2014-2022)
+# But test data had: ₹60,000 - ₹79,000 → SCALED ABOVE 1.0! 🚨
+```
+
+**The Problem:** The scaler was trained on old data (2014-2022). It had **never seen prices above ₹55,000**. When it encountered ₹77,000 in the test set, it scaled it to values above 1.0 — completely outside the model's learned range. The inverse transform then mapped predictions back to the middle of the old range: ~₹25,000.
+
+```python
+# ✅ THE FIX
+scaler = MinMaxScaler()
+scaler.fit(df[['Price']].values)   # Fit on ALL data: ₹24,545 - ₹79,257
+```
+
+---
+
+#### 🐛 **Bug #2: Dense(1) Recursive Predictions** *(Error Snowball)*
+
+```python
+# ❌ WHAT WE HAD (WRONG!)
+model = Sequential([
+    LSTM(64, return_sequences=True),
+    LSTM(32),
+    Dense(1)    # Predicts only 1 day!
+])
+# To get 30 days: predict → feed back → predict → feed back → ...
+# Each prediction adds ~1% error
+# After 30 steps: 30% cumulative error! 📉
+```
+
+**The Problem:** `Dense(1)` predicts only one day. To forecast 30 days, we had to recursively feed each prediction back as input. **Errors compounded with every step** — by day 30, the prediction had drifted ~₹15,000 from reality.
+
+```python
+# ✅ THE FIX
+model = Sequential([
+    LSTM(128, return_sequences=True),
+    LSTM(64),
+    Dense(30)     # Predicts ALL 30 days at once!
+])
+# No recursion needed → No error accumulation! ✨
+```
+
+---
+
