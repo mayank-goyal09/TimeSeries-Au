@@ -382,3 +382,98 @@ df['Date'] = pd.to_datetime(df['Date'])
 # Filter to recent high-price years only
 df = df[df['Date'].dt.year >= 2022]  # ← KEY STRATEGY!
 ```
+- 📅 **11 years** of historical data available
+- 🎯 **3 years** used for training (2022-2025)
+- 📊 **Price range**: ₹47,471 - ₹79,257
+
+---
+
+### ⚖️ **STEP 2: Smart Scaling**
+
+The scaler normalizes prices to \[0, 1\] range — fitted on the FULL dataset.
+
+```python
+scaler = MinMaxScaler(feature_range=(0, 1))
+scaler.fit(df[['Price']].values)   # ← Sees FULL range!
+
+# ₹47,471 → 0.0
+# ₹79,257 → 1.0
+# ₹77,149 → ~0.93 (properly scaled!)
+```
+
+---
+
+### 🧠 **STEP 3: LSTM Prediction**
+
+Our multi-output LSTM reads 30 days of history and predicts the next 30 days simultaneously.
+
+```python
+model = Sequential([
+    LSTM(64, return_sequences=True, input_shape=(30, 1)),
+    Dropout(0.2),
+    LSTM(32),
+    Dropout(0.2),
+    Dense(32, activation='relu'),
+    Dense(30)     # ← 30 outputs at once! No recursion!
+])
+```
+
+---
+
+### 📈 **STEP 4: Interactive Dashboard**
+
+Predictions are displayed in a premium glassmorphism Streamlit dashboard with gold particle effects.
+
+- 🪟 **Glass Cards** — Frosted glass with gold borders
+- ✨ **Animated Particles** — Floating gold sparkles
+- 📊 **Plotly Charts** — Interactive zoom/pan/hover
+- 📥 **CSV Export** — Download forecasts
+
+---
+
+## 🎨 **THE PREMIUM UI** 🎨
+
+### **Design Philosophy: Gold × Glass × Dark**
+
+Our UI isn't just functional — it's **mesmerizing**. Inspired by luxury fintech apps, every pixel screams premium:
+
+| **Feature** | **Description** | **Implementation** |
+|-------------|-----------------|-------------------|
+| 🌙 **Dark Theme** | Deep navy (#0a0a15) background | CSS linear gradients |
+| ✨ **Gold Accents** | #D4AF37 primary color | CSS variables throughout |
+| 🪟 **Glassmorphism** | Frosted glass card effects | backdrop-filter: blur(20px) |
+| ✨ **Particles** | Floating gold sparkle animation | CSS radial-gradient + animation |
+| 🔤 **Typography** | Cinzel (headers) + Poppins (body) | Google Fonts import |
+| 📈 **Charts** | Interactive with gold color scheme | Plotly custom templates |
+| 📱 **Responsive** | Works on all screen sizes | CSS media queries |
+
+### **CSS Highlights:**
+
+```css
+/* Gold Luxury Color Palette */
+:root {
+    --gold-primary: #D4AF37;
+    --gold-light: #F5E6A3;
+    --gold-dark: #996515;
+    --gold-shine: linear-gradient(135deg, #D4AF37, #F5E6A3, #D4AF37, #996515);
+    --glass-bg: rgba(20, 20, 30, 0.7);
+    --glass-border: rgba(212, 175, 55, 0.3);
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(212, 175, 55, 0.15);
+    border-radius: 20px;
+}
+
+/* Floating Gold Particles */
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.4; }
+    50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+}
+```
+
+---
