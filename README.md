@@ -599,3 +599,169 @@ Our UI isn't just functional — it's **mesmerizing**. Inspired by luxury fintec
 ```
 
 ---
+
+## 🚀 **QUICK START** 🚀
+
+### **Option 1: Live Demo** ⚡
+
+<p align="center">
+  <a href="https://timeseries-au-project.streamlit.app/">
+    <img src="https://img.shields.io/badge/🥇_LAUNCH_GOLD_ORACLE-D4AF37?style=for-the-badge&logo=streamlit&logoColor=white" alt="Launch App">
+  </a>
+</p>
+
+### **Option 2: Run Locally** 💻
+
+```bash
+# Clone the repo
+git clone https://github.com/mayank-goyal09/gold-price-oracle.git
+cd gold-price-oracle
+
+# Install dependencies
+pip install streamlit tensorflow pandas numpy scikit-learn plotly joblib
+
+# Run the app
+streamlit run app.py
+```
+
+### **Option 3: Retrain the Model** 🧠
+
+Open `main3.ipynb` in Jupyter/VS Code and run all cells.
+
+```python
+# Key parameters you can tweak:
+START_YEAR = 2022    # Training data start year
+WINDOW_SIZE = 30     # Days of history to look at
+HORIZON = 30         # Days to predict
+EPOCHS = 300         # Training epochs
+```
+
+---
+
+## 📊 **MODEL ARCHITECTURE** 📊
+
+```
+┌─────────────────────────────────────────────┐
+│           INPUT: 30 days of prices          │
+│               (30, 1) tensor                │
+├─────────────────────────────────────────────┤
+│         LSTM Layer 1 (64 units)             │
+│         return_sequences=True               │
+│         ↕ Dropout(0.2)                      │
+├─────────────────────────────────────────────┤
+│         LSTM Layer 2 (32 units)             │
+│         return_sequences=False              │
+│         ↕ Dropout(0.2)                      │
+├─────────────────────────────────────────────┤
+│         Dense(32, relu)                     │
+├─────────────────────────────────────────────┤
+│         Dense(30) — OUTPUT                  │
+│     30 predicted prices at once!            │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+## 🐛 **BUG HUNT SUMMARY — THE 3 KILLERS** 🐛
+
+<p align="center">
+  <img src="assets/recent_data_strategy.png" width="800" alt="Recent Data Training Strategy">
+</p>
+
+| # | Bug | Impact | Root Cause | Fix |
+|---|-----|--------|-----------|-----|
+| 🐛 1 | **Scaler fitted on train only** | Predictions at ₹25,000 instead of ₹77,000 | `scaler.fit(train)` didn't see high prices | `scaler.fit(ALL_DATA)` |
+| 🐛 2 | **Dense(1) recursive loop** | 15-21% cumulative error drift | Each step feeds noisy prediction back | `Dense(30)` multi-output |
+| 🐛 3 | **Training on 2014-2025** | Mean reversion to ₹41,000 | Old ₹25k data dominates | Train on 2022-2025 only |
+
+---
+
+## 📚 **SKILLS DEMONSTRATED** 📚
+
+- ✅ **Deep Learning**: LSTM architecture design, multi-output models
+- ✅ **Debugging**: Systematic root cause analysis of ML failures
+- ✅ **Data Strategy**: Smart data filtering for better model performance
+- ✅ **Feature Engineering**: Proper scaling, sequence creation
+- ✅ **MLOps Thinking**: Model validation, sanity checks, production readiness
+- ✅ **UI/UX Design**: Premium glassmorphism interface with custom CSS
+- ✅ **Data Visualization**: Plotly interactive charts, Matplotlib
+- ✅ **Problem Solving**: 3-bug investigation across model, data, and architecture
+- ✅ **Communication**: Documenting the journey, not just the result
+- ✅ **CI/CD Automation**: GitHub Actions for daily self-updating pipeline
+- ✅ **API Integration**: Yahoo Finance live data feed (yfinance)
+- ✅ **Self-Healing AI**: Auto-retraining system that adapts to new price ranges
+
+---
+
+## 🔮 **FUTURE ENHANCEMENTS** 🔮
+
+- [x] 🔄 **Auto-retrain** with daily data updates ✅ *DONE! GitHub Actions runs daily at 10 AM IST*
+- [x] 📡 **Live market data feed** via Yahoo Finance ✅ *DONE! Fetches GC=F + INR=X automatically*
+- [x] 🧹 **Rolling window database** (730 days) ✅ *DONE! Old data auto-deleted*
+- [ ] 🌐 Add **external features** (inflation, S&P 500)
+- [ ] 🤖 Try **Transformer/Attention** architecture
+- [ ] 📊 Add **confidence intervals** to predictions
+- [ ] 📱 **Mobile-responsive** dashboard improvements
+- [ ] 🔔 **Price alerts** via email/Telegram
+- [ ] 📈 Add **returns-based prediction** for comparison
+
+---
+
+## 🤝 **CONTRIBUTING** 🤝
+
+Contributions are **always welcome!** 🎉
+
+1. 🍴 Fork the Project
+2. 🌱 Create your Feature Branch (`git checkout -b feature/GoldenFeature`)
+3. 💾 Commit your Changes (`git commit -m 'Add GoldenFeature'`)
+4. 📤 Push to the Branch (`git push origin feature/GoldenFeature`)
+5. 🎁 Open a Pull Request
+
+---
+
+## 📝 **LICENSE** 📝
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+---
+
+## 👨‍💻 **CONNECT WITH ME** 👨‍💻
+
+<p align="center">
+  <a href="https://github.com/mayank-goyal09"><img src="https://img.shields.io/badge/GitHub-mayank--goyal09-181717?style=for-the-badge&logo=github" alt="GitHub"></a>
+  <a href="https://www.linkedin.com/in/mayank-goyal-mg09/"><img src="https://img.shields.io/badge/LinkedIn-Mayank_Goyal-0077B5?style=for-the-badge&logo=linkedin" alt="LinkedIn"></a>
+  <a href="https://mayank-goyal09.github.io/"><img src="https://img.shields.io/badge/Portfolio-mayank--goyal09-00C853?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Portfolio"></a>
+  <a href="mailto:itsmaygal09@gmail.com"><img src="https://img.shields.io/badge/Email-itsmaygal09@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
+</p>
+
+<p align="center">
+  <b>Mayank Goyal</b><br>
+  📊 Data Analyst | 🤖 ML Enthusiast | 🐍 Python Developer<br>
+  💼 Data Analyst Intern @ SpacECE Foundation India
+</p>
+
+---
+
+## ⭐ **SHOW YOUR SUPPORT** ⭐
+
+<p align="center">
+  <b>🥇 Enjoyed Gold Price Oracle? Give it a star! ⭐</b><br>
+  <i>Every star helps us make more awesome projects!</i>
+</p>
+
+<p align="center">
+  <a href="https://github.com/mayank-goyal09/gold-price-oracle">
+    <img src="https://img.shields.io/badge/⭐_STAR_THIS_REPO-D4AF37?style=for-the-badge" alt="Star This Repo">
+  </a>
+</p>
+
+---
+
+### 🥇 **Built with LSTM, Debugging Grit & ❤️ by Mayank Goyal** 🥇
+
+**"Three bugs. Three fixes. One golden model."** ✨
+
+---
+
+![Footer](https://capsule-render.vercel.app/api?type=waving&color=D4AF37&height=100&section=footer)
+
