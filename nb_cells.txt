@@ -1,0 +1,481 @@
+=== CELL 0 ===
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+
+=== CELL 1 ===
+df = pd.read_csv('Gold Price.csv')
+
+=== CELL 2 ===
+df.head()
+
+=== CELL 3 ===
+df.shape
+
+=== CELL 4 ===
+df.isnull().sum()
+
+=== CELL 5 ===
+df.columns  
+
+=== CELL 6 ===
+date_col_candidates = [c for c in df.columns if "date" in c.lower()]
+print("Possible date columns:", date_col_candidates)
+
+=== CELL 7 ===
+df["Date"] = pd.to_datetime(df["Date"])
+df = df.sort_values("Date").reset_index(drop=True)
+
+df.head()
+df.tail()
+
+
+=== CELL 8 ===
+df.describe().T
+
+
+=== CELL 9 ===
+target_col = "Price"   # change to "Close" or the relevant column
+df = df[["Date", target_col]].rename(columns={target_col: "Price"})
+df.head()
+
+
+=== CELL 10 ===
+df.set_index("Date", inplace=True)
+
+date_diff = df.index.to_series().diff().value_counts().sort_index()
+print(date_diff)
+
+
+=== CELL 11 ===
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+=== CELL 12 ===
+plt.figure(figsize=(12,5))
+plt.plot(df.index, df["Price"], linewidth=1.2)
+plt.title("Daily Gold Price (2015–2025)")
+plt.xlabel("Date")
+plt.ylabel("Price")
+plt.tight_layout()
+plt.show()
+
+
+=== CELL 13 ===
+plt.figure(figsize=(12,4))
+sns.histplot(df["Price"], bins=50, kde=True)
+plt.title("Distribution of Daily Gold Price")
+plt.xlabel("Price")
+plt.tight_layout()
+plt.show()
+
+
+=== CELL 14 ===
+df["Return"] = df["Price"].pct_change()
+
+plt.figure(figsize=(12,4))
+plt.plot(df.index, df["Return"])
+plt.title("Daily Returns of Gold Price")
+plt.xlabel("Date")
+plt.ylabel("Return")
+plt.tight_layout()
+plt.show()
+
+df["Return"].describe()
+
+
+=== CELL 15 ===
+
+df = df.sort_index()             
+df = df[["Price"]]                
+df.head()
+
+=== CELL 16 ===
+train_size = int(len(df) * 0.8)
+train = df.iloc[:train_size]
+test  = df.iloc[train_size:]
+
+print("Train shape:", train.shape)
+print("Test shape :", test.shape)
+
+
+=== CELL 17 ===
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler(feature_range=(0, 1))
+train_scaled = scaler.fit_transform(train[["Price"]])
+test_scaled  = scaler.transform(test[["Price"]])
+
+train_scaled[:5], test_scaled[:5]
+
+
+=== CELL 18 ===
+def create_sequences(data, window_size=60):
+    X, y = [], []
+    for i in range(window_size, len(data)):
+        X.append(data[i-window_size:i, 0]) 
+        y.append(data[i, 0])              
+    return np.array(X), np.array(y)
+
+window_size = 60  # 60 days history
+
+X_train, y_train = create_sequences(train_scaled, window_size)
+X_test,  y_test  = create_sequences(test_scaled,  window_size)
+
+print("X_train shape:", X_train.shape)
+print("y_train shape:", y_train.shape)
+print("X_test shape :", X_test.shape)
+print("y_test shape :", y_test.shape)
+
+=== CELL 19 ===
+X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
+X_test  = X_test.reshape((X_test.shape[0],  X_test.shape[1],  1))
+
+print("X_train reshaped:", X_train.shape)
+print("X_test reshaped :", X_test.shape)
+
+
+=== CELL 20 ===
+sample_idx = 0
+print("First input sequence (scaled):")
+print(X_train[sample_idx].flatten())
+print("\nTarget for this sequence (scaled):", y_train[sample_idx])
+
+
+=== CELL 21 ===
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+
+timesteps = X_train.shape[1]   # window_size (e.g., 60)
+
+model = Sequential([
+    LSTM(64, return_sequences=True, input_shape=(timesteps, 1)),
+    Dropout(0.2),
+    LSTM(32),
+    Dropout(0.2),
+    Dense(1)   # predict next price
+])
+
+model.summary()
+
+
+=== CELL 22 ===
+model.compile(
+    optimizer="adam",                 
+    loss="mse",                       
+    metrics=["mae"]                  
+)
+
+
+=== CELL 23 ===
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+
+early_stop = EarlyStopping(
+    monitor="val_loss",
+    patience=25,
+    restore_best_weights=True
+)
+
+reduce_lr = ReduceLROnPlateau(
+    monitor="val_loss",
+    factor=0.5,
+    patience=8,
+    min_lr=1e-6,
+    verbose=1
+)
+
+
+=== CELL 24 ===
+history = model.fit(
+    X_train, y_train,
+    epochs=300,
+    batch_size=32,
+    validation_split=0.1,   # last 10% of train as validation
+    callbacks=[early_stop, reduce_lr],
+    shuffle=False,          # IMPORTANT for time series
+    verbose=1
+)
+
+
+=== CELL 25 ===
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10,4))
+plt.plot(history.history["loss"], label="Train Loss")
+plt.plot(history.history["val_loss"], label="Val Loss")
+plt.xlabel("Epoch")
+plt.ylabel("MSE Loss")
+plt.title("LSTM Training vs Validation Loss")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+
+=== CELL 26 ===
+y_pred_scaled = model.predict(X_test)
+y_pred_scaled[:5]
+
+
+=== CELL 27 ===
+model.summary()
+
+
+=== CELL 28 ===
+
+# reshape to 2D
+y_test_scaled_2d = y_test.reshape(-1, 1)
+y_pred_scaled_2d = y_pred_scaled.reshape(-1, 1)
+
+y_test_actual = scaler.inverse_transform(y_test_scaled_2d).flatten()
+y_pred_actual = scaler.inverse_transform(y_pred_scaled_2d).flatten()
+
+y_test_actual[:5], y_pred_actual[:5]
+
+
+=== CELL 29 ===
+
+window_size = X_test.shape[1]
+
+test_dates = df.index[-len(y_test_actual):]  # last N dates
+len(test_dates), len(y_test_actual)
+
+
+=== CELL 30 ===
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import math
+
+mae  = mean_absolute_error(y_test_actual, y_pred_actual)
+mse  = mean_squared_error(y_test_actual, y_pred_actual)
+rmse = math.sqrt(mse)
+
+print(f"MAE  : {mae:.2f}")
+print(f"RMSE : {rmse:.2f}")
+
+
+=== CELL 31 ===
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(12,5))
+plt.plot(test_dates, y_test_actual, label="Actual Price", color="black", linewidth=1.5)
+plt.plot(test_dates, y_pred_actual, label="Predicted Price (LSTM)", color="tab:orange", linewidth=1.5)
+plt.title("Actual vs Predicted Gold Price (Test Set)")
+plt.xlabel("Date")
+plt.ylabel("Gold Price")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+
+=== CELL 32 ===
+N = 200  # last 200 days
+plt.figure(figsize=(12,5))
+plt.plot(test_dates[-N:], y_test_actual[-N:], label="Actual", color="black")
+plt.plot(test_dates[-N:], y_pred_actual[-N:], label="Predicted", color="tab:orange")
+plt.title(f"Actual vs Predicted Gold Price (Last {N} Test Days)")
+plt.xlabel("Date")
+plt.ylabel("Gold Price")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+
+=== CELL 33 ===
+window_size = 150  # try 90, 120, maybe 150
+
+X_train, y_train = create_sequences(train_scaled, window_size)
+X_test,  y_test  = create_sequences(test_scaled,  window_size)
+
+X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
+X_test  = X_test.reshape((X_test.shape[0],  X_test.shape[1],  1))
+
+
+=== CELL 34 ===
+print("Scaler data_min_:", scaler.data_min_)
+print("Scaler data_max_:", scaler.data_max_)
+
+last_prices = df["Price"].values[-window_size:].reshape(-1, 1)
+last_scaled = scaler.transform(last_prices)
+
+print("Last real price range:", last_prices.min(), last_prices.max())
+print("Last scaled range     :", last_scaled.min(), last_scaled.max())
+
+
+=== CELL 35 ===
+train_size = int(len(df) * 0.95)
+train = df.iloc[:train_size][["Price"]]
+test  = df.iloc[train_size:][["Price"]]
+
+
+=== CELL 36 ===
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler(feature_range=(0, 1))
+train_scaled = scaler.fit_transform(train)   # fit ONLY on train [web:203]
+test_scaled  = scaler.transform(test)
+
+
+=== CELL 37 ===
+window_size = 60  # keep same as your model
+
+X_train, y_train = create_sequences(train_scaled, window_size)
+X_test,  y_test  = create_sequences(test_scaled,  window_size)
+
+X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
+X_test  = X_test.reshape((X_test.shape[0],  X_test.shape[1],  1))
+
+
+=== CELL 38 ===
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+
+model = Sequential([
+    LSTM(64, return_sequences=True, input_shape=(window_size, 1)),
+    Dropout(0.2),
+    LSTM(32),
+    Dropout(0.2),
+    Dense(1)
+])
+
+model.compile(optimizer="adam", loss="mse", metrics=["mae"])
+history = model.fit(
+    X_train, y_train,
+    epochs=300,
+    batch_size=32,
+    validation_split=0.1,
+    shuffle=False,
+    callbacks=[early_stop, reduce_lr],
+    verbose=1
+)
+
+
+=== CELL 39 ===
+last_prices = df["Price"].values[-window_size:].reshape(-1, 1)
+last_scaled = scaler.transform(last_prices)
+
+print("New scaler min/max:", scaler.data_min_, scaler.data_max_)
+print("Last real price range:", last_prices.min(), last_prices.max())
+print("Last scaled range:", last_scaled.min(), last_scaled.max())
+
+
+=== CELL 40 ===
+future_df = forecast_next_n_days(model, df, scaler, window_size=window_size, n_days=30)
+future_df.head(10)
+
+
+=== CELL 41 ===
+last_prices = df["Price"].values[-window_size:].reshape(-1, 1)
+last_scaled = scaler.transform(last_prices)
+print("Last scaled range:", last_scaled.min(), last_scaled.max())
+
+
+=== CELL 42 ===
+y_pred_scaled = model.predict(X_test)
+
+y_test_actual = scaler.inverse_transform(y_test.reshape(-1, 1)).flatten()
+y_pred_actual = scaler.inverse_transform(y_pred_scaled.reshape(-1, 1)).flatten()
+
+test = df.iloc[train_size:]
+test_dates = test.index[window_size:]
+
+evaluate_and_plot_model(
+    model_name="LSTM (95% train split)",
+    test_dates=test_dates,
+    y_test_actual=y_test_actual,
+    y_pred_actual=y_pred_actual,
+    plot_last_n=200
+)
+
+
+=== CELL 43 ===
+future_df = forecast_next_n_days(model, df, scaler, window_size=window_size, n_days=30)
+print(future_df.head(10))
+
+
+=== CELL 44 ===
+import numpy as np
+
+def create_sequences_multi(data, window_size=60, horizon=30):
+    X, y = [], []
+    for i in range(window_size, len(data) - horizon + 1):
+        X.append(data[i-window_size:i, 0])
+        y.append(data[i:i+horizon, 0])  # next 'horizon' steps
+    return np.array(X), np.array(y)
+
+horizon = 30
+X_train_m, y_train_m = create_sequences_multi(train_scaled, window_size=window_size, horizon=horizon)
+X_test_m,  y_test_m  = create_sequences_multi(test_scaled,  window_size=window_size, horizon=horizon)
+
+X_train_m = X_train_m.reshape(X_train_m.shape[0], X_train_m.shape[1], 1)
+X_test_m  = X_test_m.reshape(X_test_m.shape[0],  X_test_m.shape[1],  1)
+
+print(X_train_m.shape, y_train_m.shape)  # y will be (samples, 30)
+
+
+=== CELL 45 ===
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+
+model_multi = Sequential([
+    LSTM(128, return_sequences=True, input_shape=(window_size, 1)),
+    Dropout(0.2),
+    LSTM(64),
+    Dropout(0.2),
+    Dense(horizon)   # outputs 30 values at once
+])
+
+model_multi.compile(optimizer="adam", loss="mse", metrics=["mae"])
+history = model_multi.fit(
+    X_train_m, y_train_m,
+    epochs=300,
+    batch_size=32,
+    validation_split=0.1,
+    shuffle=False,
+    callbacks=[early_stop, reduce_lr],
+    verbose=1
+)
+
+
+=== CELL 46 ===
+# last window (real prices -> scaled)
+last_prices = df["Price"].values[-window_size:].reshape(-1, 1)
+last_scaled = scaler.transform(last_prices).reshape(1, window_size, 1)
+
+pred_scaled_30 = model_multi.predict(last_scaled, verbose=0).reshape(-1, 1)
+pred_30 = scaler.inverse_transform(pred_scaled_30).flatten()
+
+future_dates = pd.date_range(df.index[-1] + pd.Timedelta(days=1), periods=horizon, freq="D")
+future_df = pd.DataFrame({"Forecast_Price": pred_30}, index=future_dates)
+future_df.head(10)
+
+
+=== CELL 47 ===
+import joblib
+
+# 1) Save model
+model_multi.save("gold_lstm_multioutput.keras")  # recommended Keras format [web:233]
+
+# 2) Save scaler
+joblib.dump(scaler, "price_scaler.pkl")          # saves fitted scaler [web:238]
+
+
+=== CELL 48 ===
+import numpy as np
+import pandas as pd
+
+def forecast_next_n_days_direct(model_multi, df, scaler, window_size=60, horizon=30):
+    last_prices = df["Price"].values[-window_size:].reshape(-1, 1)
+    last_scaled = scaler.transform(last_prices).reshape(1, window_size, 1)
+
+    pred_scaled = model_multi.predict(last_scaled, verbose=0).reshape(-1, 1)
+    pred_prices = scaler.inverse_transform(pred_scaled).flatten()
+
+    future_dates = pd.date_range(df.index[-1] + pd.Timedelta(days=1),
+                                 periods=horizon, freq="D")
+    return pd.DataFrame({"Forecast_Price": pred_prices}, index=future_dates)
+
+
+=== CELL 49 ===
+
+
