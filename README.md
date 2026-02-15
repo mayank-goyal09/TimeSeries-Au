@@ -412,3 +412,93 @@ Don't want to wait until morning? Use the sidebar buttons:
 | **🧠 Retrain AI** | Retrains the LSTM on current data | After a big price jump (e.g., ₹77k → ₹156k) |
 
 ---
+
+## 🎬 **TECH STACK — THE VAULT** 🎬
+
+Just like a **gold vault** has multiple layers of security, our project has specialized technologies for each layer:
+
+| **Role** | **Technology** | **Purpose** |
+|----------|---------------|-------------|
+| 🏛️ **The Vault** | ![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white) | Core language orchestrating everything |
+| 🧠 **The Brain** | ![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?logo=tensorflow&logoColor=white) ![Keras](https://img.shields.io/badge/Keras-D00000?logo=keras&logoColor=white) | LSTM neural network for predictions |
+| ⚖️ **The Scale** | ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikit-learn&logoColor=white) | MinMaxScaler, metrics (MAE, RMSE) |
+| 📊 **The Ledger** | ![Pandas](https://img.shields.io/badge/Pandas-150458?logo=pandas&logoColor=white) ![NumPy](https://img.shields.io/badge/NumPy-013243?logo=numpy&logoColor=white) | Data processing and manipulation |
+| 🖥️ **The Display** | ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white) | Premium glassmorphism web interface |
+| 📈 **The Charts** | ![Plotly](https://img.shields.io/badge/Plotly-3F4F75?logo=plotly&logoColor=white) | Interactive forecast visualizations |
+| 💾 **The Safe** | ![Joblib](https://img.shields.io/badge/Joblib-Serialization-blue) | Model & scaler persistence |
+| 📡 **The Feed** | ![YFinance](https://img.shields.io/badge/YFinance-00C853?logo=yahoo&logoColor=white) | Live gold price data from Yahoo Finance |
+| 🤖 **The Robot** | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white) | Daily automated updates & retraining |
+
+### **Full Tech Breakdown:**
+
+| **Category** | **Details** |
+|-------------|-------------|
+| 🐍 **Language** | Python 3.13 |
+| 🧠 **Deep Learning** | TensorFlow/Keras — LSTM (128→64→Dense(30)) |
+| 📊 **Data Processing** | Pandas, NumPy, MinMaxScaler |
+| 📈 **Visualization** | Plotly Express, Plotly Graph Objects, Matplotlib |
+| 🎨 **Frontend** | Streamlit with 600+ lines Custom CSS |
+| 🎯 **Metrics** | MAE, RMSE, Percentage Accuracy |
+| 💾 **Persistence** | Keras (.keras) model, Joblib (.pkl) scaler |
+| 📂 **Dataset** | Gold Price.csv (2,848 data points, 2014-2025) |
+
+---
+
+## 🔮 **HOW IT WORKS — THE PREDICTION PIPELINE** 🔮
+
+<p align="center">
+  <img src="assets/architecture_pipeline.png" width="800" alt="ML Pipeline Architecture">
+</p>
+
+### **The Journey from Raw Data to Gold Forecast:**
+
+---
+
+### 📥 **STEP 1: Data Ingestion**
+
+Raw CSV data enters the pipeline with 2,848 days of gold prices.
+
+```python
+df = pd.read_csv('Gold Price.csv')
+df['Date'] = pd.to_datetime(df['Date'])
+# Filter to recent high-price years only
+df = df[df['Date'].dt.year >= 2022]  # ← KEY STRATEGY!
+```
+
+- 📅 **11 years** of historical data available
+- 🎯 **3 years** used for training (2022-2025)
+- 📊 **Price range**: ₹47,471 - ₹79,257
+
+---
+
+### ⚖️ **STEP 2: Smart Scaling**
+
+The scaler normalizes prices to \[0, 1\] range — fitted on the FULL dataset.
+
+```python
+scaler = MinMaxScaler(feature_range=(0, 1))
+scaler.fit(df[['Price']].values)   # ← Sees FULL range!
+
+# ₹47,471 → 0.0
+# ₹79,257 → 1.0
+# ₹77,149 → ~0.93 (properly scaled!)
+```
+
+---
+
+### 🧠 **STEP 3: LSTM Prediction**
+
+Our multi-output LSTM reads 30 days of history and predicts the next 30 days simultaneously.
+
+```python
+model = Sequential([
+    LSTM(64, return_sequences=True, input_shape=(30, 1)),
+    Dropout(0.2),
+    LSTM(32),
+    Dropout(0.2),
+    Dense(32, activation='relu'),
+    Dense(30)     # ← 30 outputs at once! No recursion!
+])
+```
+
+---
