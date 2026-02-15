@@ -271,3 +271,144 @@ For financial forecasting, recent patterns matter more than historical ones. Tra
 We dove deep into every line of code. Hours of debugging. Coffee. More coffee. And then... **we found not one, but THREE critical bugs:**
 
 ---
+
+## 🏗️ **WHAT WE BUILT** 🏗️
+
+<p align="center">
+  <img src="assets/streamlit_app_ui.png" width="800" alt="Gold Price Oracle - Streamlit App">
+</p>
+
+<table>
+<tr>
+<td width="50%">
+
+### 🧠 **LSTM Prediction Engine**
+
+Our Deep Learning model analyzes 30 days of price history and forecasts the next 30 days — all at once!
+
+- 🔮 **Multi-Output LSTM** — Predicts 30 days simultaneously
+- 📊 **Smart Scaling** — MinMaxScaler fitted on full range
+- 🎯 **Recent Data Training** — 2022-2025 focus
+- ⚡ **Fast Inference** — Predictions in < 1 second
+
+</td>
+<td width="50%">
+
+### 🎨 **Premium Gold UI**
+
+A stunning Streamlit dashboard with glassmorphism design and gold particle effects.
+
+- ✨ **Gold Particle Animations** — Floating sparkles
+- 🪟 **Glassmorphism Cards** — Frosted glass aesthetic
+- 📈 **Interactive Plotly Charts** — Zoom, pan, hover
+- 📥 **CSV Download** — Export forecast data for analysis
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 📊 **Data Intelligence**
+
+Smart data processing pipeline that transforms raw CSV into actionable predictions.
+
+- 📅 **11 Years of Data** — 2,848 data points (2014-2025)
+- 🧹 **Auto Preprocessing** — Missing values, date parsing
+- 📉 **Key Metrics** — MAE, RMSE, % accuracy
+- 🔄 **Upload Your Own** — Custom CSV support
+
+</td>
+<td width="50%">
+
+### 🔮 **Forecast Engine**
+
+Two forecast modes for maximum flexibility:
+
+- 🎯 **Direct Forecast** — Multi-output, no error drift
+- 🔄 **Recursive Forecast** — Single-step for comparison
+- 📆 **1-30 Day Horizon** — Adjustable via slider
+- ✅ **Sanity Checks** — Auto-validates predictions
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🤖 **THE AUTONOMOUS SYSTEM — Self-Updating & Self-Training** 🤖
+
+> *"What if the model could update itself every single day — without anyone touching it?"*
+
+After fixing the 3 bugs, we faced a NEW challenge: **Gold prices kept rising.** The model trained on ₹77k data couldn't handle ₹156k prices. So we built a **fully autonomous pipeline** that keeps the Oracle alive forever.
+
+<p align="center">
+  <img src="assets/automation_pipeline.png" width="800" alt="Daily Automation Pipeline">
+</p>
+
+<table>
+<tr>
+<td width="50%">
+
+### 🔄 **Live Market Data Feed**
+
+The system connects to **Yahoo Finance** every morning and pulls real gold prices.
+
+- 📡 **Source:** Global Gold Futures (`GC=F`) + USD/INR exchange rate (`INR=X`)
+- 🧮 **Smart Conversion:** Converts international USD/oz price → Indian ₹/10g
+- 💰 **Premium Ratio:** Auto-calculates local market premium (taxes, import duty)
+- 📅 **Market-Aware:** Skips weekends & holidays automatically
+
+</td>
+<td width="50%">
+
+### 🧠 **Self-Retraining AI**
+
+After fetching new data, the model **retrains itself** from scratch.
+
+- 🔁 **Daily Retraining:** 50 epochs on latest 730 days of data
+- ⚖️ **New Scaler:** MinMaxScaler refits to handle new price ranges
+- 🧹 **Rolling Window:** Keeps exactly **2 years (730 days)** — old data auto-deleted
+- 🚀 **Zero Downtime:** Model + Scaler saved → Streamlit auto-restarts
+
+</td>
+</tr>
+</table>
+
+### ⚙️ **The Daily Automation Cycle (GitHub Actions)**
+
+Every morning at **10:00 AM IST**, a GitHub Actions robot wakes up and runs this pipeline:
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                    ⏰ 10:00 AM IST — DAILY TRIGGER                  │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  Step 1: 📡 FETCH          daily_data_update.py                      │
+│          ├─ Download Gold Futures (GC=F) from Yahoo Finance          │
+│          ├─ Download USD/INR exchange rate (INR=X)                   │
+│          ├─ Convert: (USD/31.1g) × 10 × INR × Premium = ₹/10g       │
+│          └─ Append to Gold Price.csv + trim to 730 days              │
+│                                                                      │
+│  Step 2: 🧠 RETRAIN        train_model.py                            │
+│          ├─ Load updated Gold Price.csv                              │
+│          ├─ Fit new MinMaxScaler on full range                       │
+│          ├─ Train LSTM (64→32→Dense(30)) for 50 epochs               │
+│          └─ Save gold_lstm_multioutput.keras + price_scaler.pkl      │
+│                                                                      │
+│  Step 3: 💾 COMMIT         git push                                  │
+│          ├─ Commit updated CSV + Model + Scaler to GitHub            │
+│          └─ Streamlit Cloud auto-deploys! 🚀                         │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+### 🎮 **Manual Controls (In-App Buttons)**
+
+Don't want to wait until morning? Use the sidebar buttons:
+
+| Button | What It Does | When To Use |
+|--------|-------------|-------------|
+| **🔄 Refresh Data** | Fetches latest prices from Yahoo Finance | When you want today's price NOW |
+| **🧠 Retrain AI** | Retrains the LSTM on current data | After a big price jump (e.g., ₹77k → ₹156k) |
+
+---
